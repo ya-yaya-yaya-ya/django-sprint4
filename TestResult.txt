@@ -1,0 +1,2390 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-8.3.3, pluggy-1.5.0 -- C:\Dev\django-sprint4\venv\Scripts\python.exe
+django: version: 5.1.1, settings: blogicum.settings (from ini)
+rootdir: C:\Dev\django-sprint4
+configfile: pytest.ini
+plugins: Faker-12.0.1, django-4.9.0
+collecting ... collected 26 items
+
+tests/test_content.py::TestContent::test_unpublished FAILED              [  3%]
+tests/test_content.py::TestContent::test_only_own_pubs_in_category PASSED [  7%]
+tests/test_content.py::TestContent::test_only_own_pubs_in_profile FAILED [ 11%]
+tests/test_content.py::TestContent::test_unpublished_category FAILED     [ 15%]
+tests/test_content.py::TestContent::test_future_posts FAILED             [ 19%]
+tests/test_content.py::TestContent::test_pagination FAILED               [ 23%]
+tests/test_content.py::TestContent::test_image_visible FAILED            [ 26%]
+tests/test_err_pages.py::test_custom_err_handlers FAILED                 [ 30%]
+tests/test_users.py::test_custom_err_handlers PASSED                     [ 34%]
+tests/test_users.py::test_profile FAILED                                 [ 38%]
+tests/test_comment.py::test_comment_created_at ERROR                     [ 42%]
+tests/test_comment.py::test_comment ERROR                                [ 46%]
+tests/test_comment.py::test_404_on_comment_deleted_post ERROR            [ 50%]
+tests/test_post.py::test_post_created_at PASSED                          [ 53%]
+tests/test_post.py::test_post ERROR                                      [ 57%]
+tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`post` field] <- tests\conftest.py ERROR [ 61%]
+tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`author` field] <- tests\conftest.py ERROR [ 65%]
+tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`text` field] <- tests\conftest.py ERROR [ 69%]
+tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`created_at` field] <- tests\conftest.py ERROR [ 73%]
+tests/test_comment.py::test_link_order_in_comment_template PASSED        [ 76%]
+tests/test_emails.py::test_gitignore PASSED                              [ 80%]
+tests/test_emails.py::test_email_backend_settings PASSED                 [ 84%]
+tests/test_err_pages.py::test_csrf_failure_view PASSED                   [ 88%]
+tests/test_post.py::TestPostModelAttrs::test_model_attrs[`image` field] <- tests\conftest.py FAILED [ 92%]
+tests/test_post.py::TestPostModelAttrs::test_model_attrs[`pub_date` field] <- tests\conftest.py PASSED [ 96%]
+tests/test_static_pages.py::test_static_pages_as_cbv FAILED              [100%]
+tests/test_static_pages.py::test_static_pages_as_cbv ERROR               [100%]
+
+=================================== ERRORS ====================================
+__________________ ERROR at setup of test_comment_created_at __________________
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+_______________________ ERROR at setup of test_comment ________________________
+
+user_client = <django.test.client.Client object at 0x00000232DFE48450>
+post_with_published_location = <Post: adrianamerritt Nor Interesting>
+
+    @pytest.fixture
+    def post_comment_context_form_item(
+        user_client: Client, post_with_published_location
+    ) -> Tuple[str, BaseForm]:
+>       response = get_a_post_get_response_safely(
+            user_client, post_with_published_location.id
+        )
+
+tests\fixtures\posts.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\conftest.py:263: in get_a_post_get_response_safely
+    return get_get_response_safely(
+tests\conftest.py:254: in get_get_response_safely
+    response = user_client.get(url)
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:56: in post_detail
+    return render(request, 'blog/detail.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_post', _prefix = '/', args = (1,), kwargs = {}
+possibilities = []
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_post' not found. 'edit_post' is not a valid view function or pattern name.
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+_____________ ERROR at setup of test_404_on_comment_deleted_post ______________
+
+user_client = <django.test.client.Client object at 0x00000232DFDB2110>
+post_with_published_location = <Post: ocooper On Wrong Area A>
+
+    @pytest.fixture
+    def post_comment_context_form_item(
+        user_client: Client, post_with_published_location
+    ) -> Tuple[str, BaseForm]:
+>       response = get_a_post_get_response_safely(
+            user_client, post_with_published_location.id
+        )
+
+tests\fixtures\posts.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\conftest.py:263: in get_a_post_get_response_safely
+    return get_get_response_safely(
+tests\conftest.py:254: in get_get_response_safely
+    response = user_client.get(url)
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:56: in post_detail
+    return render(request, 'blog/detail.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_post', _prefix = '/', args = (2,), kwargs = {}
+possibilities = []
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_post' not found. 'edit_post' is not a valid view function or pattern name.
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+_________________________ ERROR at setup of test_post _________________________
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+___ ERROR at setup of TestCommentModelAttrs.test_model_attrs[`post` field] ____
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+__ ERROR at setup of TestCommentModelAttrs.test_model_attrs[`author` field] ___
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+___ ERROR at setup of TestCommentModelAttrs.test_model_attrs[`text` field] ____
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+_ ERROR at setup of TestCommentModelAttrs.test_model_attrs[`created_at` field] _
+
+    @pytest.fixture
+    def CommentModel() -> Model:
+        try:
+            from blog import models
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `blog/models.py` нет ошибок. "
+                "При импорте `models.py` возникла ошибка:\n"
+                f"{type(e).__name__}: {e}"
+            )
+        models_src_code = getsource(models)
+        models_src_clean = re.sub("#.+", "", models_src_code)
+        class_defs = re.findall(
+            r"(class +\w+[\w\W]+?)(?=class)", models_src_clean + "class"
+        )
+        comment_class_name = ""
+        known_class_names = {"BaseModel", "Meta", "Category", "Location", "Post"}
+        for class_def in class_defs:
+            class_names = re.findall(
+                r"class +(\w+)[\w\W]+ForeignKey[\w\W]+Post", class_def
+            )
+            for name in class_names:
+                if name not in known_class_names:
+                    comment_class_name = name
+                    break
+            if comment_class_name:
+                break
+>       assert comment_class_name, (
+            "Убедитесь, что в файле `blog/models.py` объявлена модель комментария"
+            " с полем `ForeignKey`, связывающим её с моделью `Post`."
+        )
+E       AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+E       assert ''
+
+tests\conftest.py:239: AssertionError
+________________ ERROR at teardown of test_static_pages_as_cbv ________________
+
+request = <SubRequest 'cleanup' for <Function test_unpublished>>
+
+    @pytest.fixture(scope="session", autouse=True)
+    def cleanup(request):
+        start_time = time.time()
+    
+        yield
+    
+        from blogicum import settings
+    
+>       image_dir = Path(settings.__file__).parent.parent / settings.MEDIA_ROOT
+E       AttributeError: module 'blogicum.settings' has no attribute 'MEDIA_ROOT'
+
+tests\conftest.py:358: AttributeError
+================================== FAILURES ===================================
+________________________ TestContent.test_unpublished _________________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DE718150>
+client = <django.test.client.Client object at 0x00000232DE6D7350>
+url = '/profile/beth71/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2BC950>
+unpublished_posts_with_published_locations = [<Post: beth71 Experience Ener>, <Post: beth71 Still Party One>, <Post: beth71 Enjoy As Direct>]
+
+    def test_unpublished(self, unpublished_posts_with_published_locations):
+>       profile_response = self.profile_tester.user_client_testget()
+
+tests\test_content.py:340: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DE718150>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+__________________ TestContent.test_only_own_pubs_in_profile __________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DE5ED8D0>
+client = <django.test.client.Client object at 0x00000232E01D4F90>
+url = '/profile/jimmy79/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2C6D10>
+user_client = <django.test.client.Client object at 0x00000232E01D4F90>
+post_with_published_location = <Post: jimmy79 Easy Threat Whi>
+post_of_another_author = <Post: sylvia97 Professor Manag>
+
+    def test_only_own_pubs_in_profile(
+            self, user_client, post_with_published_location,
+            post_of_another_author
+    ):
+>       response = self.profile_tester.user_client_testget()
+
+tests\test_content.py:396: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DE5ED8D0>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+____________________ TestContent.test_unpublished_category ____________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DFD05A50>
+client = <django.test.client.Client object at 0x00000232DFD04C90>
+url = '/profile/clairecole/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2B2710>
+user_client = <django.test.client.Client object at 0x00000232DFD04C90>
+posts_with_unpublished_category = [<Post: clairecole Far Generation >, <Post: clairecole Memory Far Wall>, <Post: clairecole That Produce Le>]
+
+    def test_unpublished_category(
+        self, user_client, posts_with_unpublished_category
+    ):
+>       profile_response = self.profile_tester.user_client_testget()
+
+tests\test_content.py:411: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DFD05A50>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+________________________ TestContent.test_future_posts ________________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232E004D050>
+client = <django.test.client.Client object at 0x00000232E004E710>
+url = '/profile/jonathon75/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2C5490>
+user_client = <django.test.client.Client object at 0x00000232E004E710>
+future_posts = [<Post: jonathon75 Smile Beyond Li>, <Post: jonathon75 Person West Sin>, <Post: jonathon75 Onto Song Histo>]
+
+    def test_future_posts(self, user_client, future_posts):
+>       profile_response = self.profile_tester.user_client_testget()
+
+tests\test_content.py:441: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232E004D050>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+_________________________ TestContent.test_pagination _________________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DFBFE410>
+client = <django.test.client.Client object at 0x00000232DFBFDAD0>
+url = '/profile/dominique12/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2C4150>
+user_client = <django.test.client.Client object at 0x00000232DFBFDAD0>
+many_posts_with_published_locations = [<Post: dominique12 Increase Decide>, <Post: dominique12 Question Type Y>, <Post: dominique12 Perhaps Coach W>, <Post: dominique12 Her Floor Toget>, <Post: dominique12 Of Risk Fund Mo>, <Post: dominique12 Man State Color>, ...]
+
+    def test_pagination(
+        self, user_client, many_posts_with_published_locations
+    ):
+        posts = many_posts_with_published_locations
+    
+        assert len(posts) > self.profile_tester.n_per_page
+        assert len(posts) > self.main_tester.n_per_page
+        assert len(posts) > self.category_tester.n_per_page
+    
+        for (
+            tester,
+            response_get_func,
+            ordering_err_msg,
+            pagination_err_msg,
+        ) in (
+            (
+                self.profile_tester,
+                self.profile_tester.user_client_testget,
+                (
+                    "Убедитесь, что публикации передаются в контекст страницы"
+                    " профиля автора отсортированными по времени их"
+                    " публикации, «от новых к старым»."
+                ),
+                (
+                    "Убедитесь, что на странице профиля автора работает"
+                    " пагинация."
+                ),
+            ),
+            (
+                self.profile_tester,
+                self.profile_tester.another_client_testget,
+                (
+                    "Убедитесь, что публикации передаются в контекст страницы"
+                    " профиля автора отсортированными по времени их"
+                    " публикации, «от новых к старым»."
+                ),
+                (
+                    "Убедитесь, что на странице профиля автора "
+                    "пагинация работает в соответствии с заданием ."
+                ),
+            ),
+            (
+                self.main_tester,
+                self.main_tester.user_client_testget,
+                (
+                    "Убедитесь, что публикации передаются в контекст главной"
+                    " страницы отсортированными по времени их публикации, «от"
+                    " новых к старым»."
+                ),
+                "Убедитесь, что на главной странице "
+                "пагинация работает в соответствии с заданием .",
+            ),
+            (
+                self.category_tester,
+                self.category_tester.user_client_testget,
+                (
+                    "Убедитесь, что публикации передаются в контекст страницы"
+                    " категории отсортированными по времени их публикации, «от"
+                    " новых к старым»."
+                ),
+                "Убедитесь, что на странице категории "
+                "пагинация работает в соответствии с заданием .",
+            ),
+        ):
+>           response = response_get_func()
+
+tests\test_content.py:539: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232DFBFE410>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+_______________________ TestContent.test_image_visible ________________________
+
+self = <test_content.ProfilePostContentTester object at 0x00000232E02260D0>
+client = <django.test.client.Client object at 0x00000232E0225CD0>
+url = '/profile/murraylaura/', assert_status_in = (200,)
+assert_cbk = 'raise_assert_page_loads_cbk'
+
+    def _testget(
+        self,
+        client,
+        url: Optional[str] = None,
+        assert_status_in: Tuple[int] = (200,),
+        assert_cbk: Union[
+            Callable[[], None], str
+        ] = "raise_assert_page_loads_cbk",
+    ) -> HttpResponse:
+        url = url or self.page_url.url
+        try:
+>           response = client.get(url)
+
+tests\test_content.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+
+During handling of the above exception, another exception occurred:
+
+self = <test_content.TestContent object at 0x00000232DE2C5C90>
+user_client = <django.test.client.Client object at 0x00000232E0225CD0>
+post_with_published_location = <Post: murraylaura Name Those Also>
+
+    def test_image_visible(self, user_client, post_with_published_location):
+        post = post_with_published_location
+        post_adapter = PostModelAdapter(post)
+    
+        testers: List[PostContentTester] = [
+            self.profile_tester,
+            self.main_tester,
+            self.category_tester,
+        ]
+        img_n_with_post_img = {}
+    
+        for i, tester in enumerate(testers):
+            img_soup_with_post_img = BeautifulSoup(
+>               tester.user_client_testget().content.decode("utf-8"),
+                features="html.parser",
+                parse_only=SoupStrainer("img"),
+            )
+
+tests\test_content.py:560: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_content.py:71: in user_client_testget
+    return self._testget(
+tests\test_content.py:105: in _testget
+    getattr(self, assert_cbk)()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_content.ProfilePostContentTester object at 0x00000232E02260D0>
+
+    def raise_assert_page_loads_cbk(self):
+>       raise AssertionError(
+            "Убедитесь, что страница пользователя загружается без ошибок."
+        )
+E       AssertionError: Убедитесь, что страница пользователя загружается без ошибок.
+
+tests\test_content.py:202: AssertionError
+__________________________ test_custom_err_handlers ___________________________
+
+client = <django.test.client.Client object at 0x00000232DFE3D950>
+user_client = <django.test.client.Client object at 0x00000232DFE3FD90>
+
+    @pytest.mark.django_db
+    def test_custom_err_handlers(client, user_client):
+        err_pages_vs_file_names = {
+            404: "404.html",
+            403: "403csrf.html",
+            500: "500.html",
+        }
+        for status, fname in err_pages_vs_file_names.items():
+            try:
+                fpath = settings.TEMPLATES_DIR / "pages" / fname
+            except Exception as e:
+                raise AssertionError(
+                    'Убедитесь, что переменная TEMPLATES_DIR в настройках проекта '
+                    'является строкой (str) или объектом, соответствующим path-like интерфейсу '
+                    '(например, экземпляром pathlib.Path). '
+                    f'При операции конкатенации settings.TEMPLATES_DIR / "pages", возникла ошибка: {e}'
+                )
+            assert os.path.isfile(
+                fpath.resolve()
+            ), f"Убедитесь, что файл шаблона `{fpath}` существует."
+    
+        try:
+            from blogicum.urls import handler500
+        except Exception:
+            raise AssertionError(
+                "Убедитесь, что в головном файле с маршрутами нет ошибок и что в"
+                " нём задан обработчик ошибки 500."
+            )
+    
+        def check_handler_exists(handler_path):
+            module_name, func_name = handler_path.rsplit('.', 1)
+            try:
+                module = importlib.import_module(module_name)
+            except ImportError:
+                return False
+            try:
+                getattr(module, func_name)
+            except AttributeError:
+                return False
+            return True
+    
+        assert check_handler_exists(handler500), (
+            'Убедитесь, что обработчик ошибки 500 в головном файле с маршрутами '
+            'указывает на существующую функцию.'
+        )
+    
+        try:
+            from pages import views as pages_views
+        except Exception:
+            raise AssertionError(
+                "Убедитесь, что в файле `pages/views.py` нет ошибок."
+            )
+    
+        for status, fname in err_pages_vs_file_names.items():
+>           assert fname in inspect.getsource(pages_views), (
+                "Проверьте view-функции приложения `pages`: убедитесь, что для"
+                " генерации страниц со статусом ответа `{status}` используется"
+                " шаблон `pages/{fname}`"
+            )
+E           AssertionError: Проверьте view-функции приложения `pages`: убедитесь, что для генерации страниц со статусом ответа `{status}` используется шаблон `pages/{fname}`
+E           assert '404.html' in 'from django.shortcuts import render\n\n\ndef about(request):\n    """О проекте."""\n    return render(request, \'pages/about.html\')\n\n\ndef rules(request):\n    """Правила."""\n    return render(request, \'pages/rules.html\')\n'
+E            +  where 'from django.shortcuts import render\n\n\ndef about(request):\n    """О проекте."""\n    return render(request, \'pages/about.html\')\n\n\ndef rules(request):\n    """Правила."""\n    return render(request, \'pages/rules.html\')\n' = <function getsource at 0x00000232D9F77B00>(<module 'pages.views' from 'C:\\Dev\\django-sprint4\\blogicum\\pages\\views.py'>)
+E            +    where <function getsource at 0x00000232D9F77B00> = inspect.getsource
+
+tests\test_err_pages.py:100: AssertionError
+________________________________ test_profile _________________________________
+
+user = <User: martinmaria>, another_user = <User: nadams>
+user_client = <django.test.client.Client object at 0x00000232DFDA3650>
+another_user_client = <django.test.client.Client object at 0x00000232E0009190>
+unlogged_client = <django.test.client.Client object at 0x00000232DFDA3910>
+
+    @pytest.mark.django_db
+    def test_profile(
+            user, another_user, user_client, another_user_client, unlogged_client
+    ):
+        user_url = f"/profile/{user.username}/"
+        printed_url = "/profile/<username>/"
+    
+        User = get_user_model()
+        status_code_not_404_err_msg = (
+            "Убедитесь, что при обращении к странице несуществующего "
+            "пользователя возвращается статус 404."
+        )
+        try:
+>           response = user_client.get("/profile/this_is_unexisting_user_name/")
+
+tests\test_users.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\django\test\client.py:1129: in get
+    response = super().get(
+venv\Lib\site-packages\django\test\client.py:479: in get
+    return self.generic(
+venv\Lib\site-packages\django\test\client.py:676: in generic
+    return self.request(**r)
+venv\Lib\site-packages\django\test\client.py:1092: in request
+    self.check_exception(response)
+venv\Lib\site-packages\django\test\client.py:805: in check_exception
+    raise exc_value
+venv\Lib\site-packages\django\core\handlers\exception.py:55: in inner
+    response = get_response(request)
+venv\Lib\site-packages\django\core\handlers\base.py:197: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+blogicum\blog\views.py:82: in profile
+    return render(request, 'blog/profile.html', {
+venv\Lib\site-packages\django\shortcuts.py:25: in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+venv\Lib\site-packages\django\template\loader.py:62: in render_to_string
+    return template.render(context, request)
+venv\Lib\site-packages\django\template\backends\django.py:107: in render
+    return self.template.render(context)
+venv\Lib\site-packages\django\template\base.py:171: in render
+    return self._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:159: in render
+    return compiled_parent._render(context)
+venv\Lib\site-packages\django\test\utils.py:114: in instrumented_test_render
+    return self.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\loader_tags.py:65: in render
+    result = block.nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:327: in render
+    return nodelist.render(context)
+venv\Lib\site-packages\django\template\base.py:1008: in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:1008: in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+venv\Lib\site-packages\django\template\base.py:969: in render_annotated
+    return self.render(context)
+venv\Lib\site-packages\django\template\defaulttags.py:480: in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+venv\Lib\site-packages\django\urls\base.py:88: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <URLResolver <module 'blog.urls' from 'C:\\Dev\\django-sprint4\\blogicum\\blog\\urls.py'> (blog:blog) ''>
+lookup_view = 'edit_profile', _prefix = '/', args = (), kwargs = {}
+possibilities = [([('profile/%(username)s/edit_profile/', ['username'])], 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', {}, {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>})]
+possibility = [('profile/%(username)s/edit_profile/', ['username'])]
+pattern = 'profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z', defaults = {}
+converters = {'username': <django.urls.converters.SlugConverter object at 0x00000232DD9EC3D0>}
+result = 'profile/%(username)s/edit_profile/', params = ['username']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    matches = True
+                    for k, v in defaults.items():
+                        if k in params:
+                            continue
+                        if kwargs.get(k, v) != v:
+                            matches = False
+                            break
+                    if not matches:
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace("%", "%%") + result
+                if re.search(
+                    "^%s%s" % (re.escape(_prefix), pattern),
+                    candidate_pat % text_candidate_subs,
+                ):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(
+                        candidate_pat % text_candidate_subs,
+                        safe=RFC3986_SUBDELIMS + "/~:@",
+                    )
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, "__module__", None)
+        n = getattr(lookup_view, "__name__", None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" % (
+                lookup_view_s,
+                arg_msg,
+                len(patterns),
+                patterns,
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {"view": lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'edit_profile' with no arguments not found. 1 pattern(s) tried: ['profile/(?P<username>[-a-zA-Z0-9_]+)/edit_profile/\\Z']
+
+venv\Lib\site-packages\django\urls\resolvers.py:831: NoReverseMatch
+_____________ TestPostModelAttrs.test_model_attrs[`image` field] ______________
+
+self = <adapters.post.PostModelAdapter object at 0x00000232DFAF4510>
+name = 'image'
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("_") or name in self._access_by_name_fields:
+            return getattr(self._item_or_cls, name)
+    
+        item_fields = [
+            (f.name, type(f), getattr(self.ItemModel, f.name).field)
+            for f in self.ItemModel._meta.concrete_fields
+            if issubclass(type(f), Field)
+            and (f.name not in self._access_by_name_fields)
+        ]
+    
+        item_field_names = {
+            get_field_key(_type, field): name
+            for name, _type, field in item_fields
+        }
+    
+        assert len(item_field_names) == len(item_fields), (
+            f"Убедитесь, что в модели {self.ItemModel.__name__} нет полей,"
+            " которые не описаны в задании. Проверьте, что для всех полей"
+            " модели правильно заданы типы."
+        )
+    
+        adapter_field_key = get_field_key(
+            type(getattr(self.AdapterFields, name)),
+            getattr(self.AdapterFields, name),
+        )
+        try:
+>           item_field_name = item_field_names[adapter_field_key]
+E           KeyError: ('ImageField', None)
+
+tests\adapters\student_adapter.py:56: KeyError
+
+During handling of the above exception, another exception occurred:
+
+self = <test_post.TestPostModelAttrs object at 0x00000232DE4DBA10>
+field = 'image', type = <class 'django.db.models.fields.files.ImageField'>
+params = {}, field_error = 'В модели `Post` укажите атрибут `image`.'
+type_error = None, param_error = None, value_error = None
+
+    def test_model_attrs(
+            self, field: str, type: type, params: dict,
+            field_error: Optional[str], type_error: Optional[str],
+            param_error: Optional[str], value_error: Optional[str]):
+        model_name = self.model.__name__
+        field_error = field_error or (
+            f"В модели `{model_name}` укажите атрибут `{field}`.")
+>       assert hasattr(self.model, field), field_error
+
+tests\conftest.py:173: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <adapters.post.PostModelAdapter object at 0x00000232DFAF4510>
+name = 'image'
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("_") or name in self._access_by_name_fields:
+            return getattr(self._item_or_cls, name)
+    
+        item_fields = [
+            (f.name, type(f), getattr(self.ItemModel, f.name).field)
+            for f in self.ItemModel._meta.concrete_fields
+            if issubclass(type(f), Field)
+            and (f.name not in self._access_by_name_fields)
+        ]
+    
+        item_field_names = {
+            get_field_key(_type, field): name
+            for name, _type, field in item_fields
+        }
+    
+        assert len(item_field_names) == len(item_fields), (
+            f"Убедитесь, что в модели {self.ItemModel.__name__} нет полей,"
+            " которые не описаны в задании. Проверьте, что для всех полей"
+            " модели правильно заданы типы."
+        )
+    
+        adapter_field_key = get_field_key(
+            type(getattr(self.AdapterFields, name)),
+            getattr(self.AdapterFields, name),
+        )
+        try:
+            item_field_name = item_field_names[adapter_field_key]
+        except KeyError:
+>           raise AssertionError(
+                f"В модели `{self.ItemModel.__name__}` создайте поле типа"
+                f" `{adapter_field_key[0]}`, которое"
+                f" {self.AdapterFields.field_description[name]}."
+            )
+E           AssertionError: В модели `Post` создайте поле типа `ImageField`, которое служит для хранения изображения публикации.
+
+tests\adapters\student_adapter.py:58: AssertionError
+__________________________ test_static_pages_as_cbv ___________________________
+
+    def test_static_pages_as_cbv():
+        try:
+            from pages import urls
+        except Exception as e:
+            raise AssertionError(
+                "Убедитесь, что в файле `pages/urls.py` нет ошибок. При его"
+                f" импорте возникла ошибка:\n{type(e).__name__}: {e}"
+            )
+        try:
+            from pages.urls import urlpatterns
+        except Exception:
+            raise AssertionError(
+                "Убедитесь, что в файле `pages/urls.py` задан список urlpatterns."
+            )
+        try:
+            from pages.urls import app_name
+        except Exception:
+            raise AssertionError(
+                "Убедитесь, что в файле `pages/urls.py` определена глобальная"
+                " переменная `app_name`, задающая пространство имён url для"
+                " приложения `pages`."
+            )
+        for path in urlpatterns:
+            if not hasattr(path.callback, "view_class"):
+>               raise AssertionError(
+                    "Убедитесь, что в файле `pages/urls.py` маршруты статических"
+                    " страниц подключены с помощью CBV."
+                )
+E               AssertionError: Убедитесь, что в файле `pages/urls.py` маршруты статических страниц подключены с помощью CBV.
+
+tests\test_static_pages.py:25: AssertionError
+=========================== short test summary info ===========================
+ERROR tests/test_comment.py::test_comment_created_at - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_comment.py::test_comment - django.urls.exceptions.NoReverseMatch: Reverse for 'edit_post' not found. 'edit_post' is not a valid view function or pattern name.
+ERROR tests/test_comment.py::test_404_on_comment_deleted_post - django.urls.exceptions.NoReverseMatch: Reverse for 'edit_post' not found. 'edit_post' is not a valid view function or pattern name.
+ERROR tests/test_post.py::test_post - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`post` field] - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`author` field] - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`text` field] - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_comment.py::TestCommentModelAttrs::test_model_attrs[`created_at` field] - AssertionError: Убедитесь, что в файле `blog/models.py` объявлена модель комментария с полем `ForeignKey`, связывающим её с моделью `Post`.
+assert ''
+ERROR tests/test_static_pages.py::test_static_pages_as_cbv - AttributeError: module 'blogicum.settings' has no attribute 'MEDIA_ROOT'
+============= 10 failed, 8 passed, 4 warnings, 9 errors in 2.35s ==============
