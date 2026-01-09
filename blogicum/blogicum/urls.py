@@ -7,7 +7,7 @@ from django.conf import settings
 
 handler404 = 'core.views.page_not_found'
 handler500 = 'core.views.server_error'
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure' 
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
 
 urlpatterns = [
     path('admin/', admin.site.urls),

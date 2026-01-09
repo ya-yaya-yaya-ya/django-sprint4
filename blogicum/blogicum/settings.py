@@ -9,14 +9,14 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-] 
+]
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.<тип бэкенда>.EmailBackend'
-EMAIL_FILE_PATH = BASE_DIR / 'sent_emails' 
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 LOGIN_REDIRECT_URL = 'blog:index'
-LOGIN_URL = 'login' 
+LOGIN_URL = 'login'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',

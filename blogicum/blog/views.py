@@ -24,6 +24,7 @@ from django.http import HttpResponseForbidden
 
 PAGINATE_COUNT = 10
 
+
 def get_comment_and_check_permission(request, comment_id):
     """Получает комментарий и проверяет разрешение пользователя."""
     comment = get_object_or_404(Comment, id=comment_id)
@@ -78,6 +79,7 @@ def paginate_queryset(queryset, request):
     paginator = Paginator(queryset, PAGINATE_COUNT)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
+
 
 @login_required
 def add_comment(request, post_id):

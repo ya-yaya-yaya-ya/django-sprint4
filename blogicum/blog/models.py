@@ -45,7 +45,7 @@ class AuthorModel(models.Model):
 
     def __str__(self):
         return self.author
-    
+
 
 class Category(PublishedModel, TitleModel):
     description = models.TextField('Описание')
