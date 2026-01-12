@@ -120,7 +120,9 @@ def delete_comment(request, post_id, comment_id):
         comment.delete()
         return redirect('blog:post_detail', post_id)
 
-    return render_comment_template(request, comment, None)
+    template = 'blog/comment.html'
+    context = {'comment': comment}
+    return render(request, template, context)
 
 
 @login_required
