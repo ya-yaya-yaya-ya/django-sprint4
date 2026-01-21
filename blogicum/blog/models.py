@@ -1,10 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
-
-TITLE_LENGTH = 256
-TEXT_LENGTH = 100
-SLUG_LENGTH = 64
+from constants import SLUG_LENGTH, TEXT_LENGTH, TITLE_LENGTH
 
 
 class PublishedModel(models.Model):
@@ -84,7 +81,6 @@ class Post(PublishedModel, TitleModel, AuthorModel):
     )
     location = models.ForeignKey(
         Location,
-        related_name='posts',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -92,38 +88,39 @@ class Post(PublishedModel, TitleModel, AuthorModel):
     )
     category = models.ForeignKey(
         Category,
-        related_name='category_posts',
         on_delete=models.SET_NULL,
         null=True,
-        blank=False,
         verbose_name='Категория'
     )
 
     class Meta:
+        default_related_name = 'posts'
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
         ordering = ('-pub_date',)
 
-    @property
-    def comment_count(self):
-        return self.comments.count()
+    # @property
+    # def comment_count(self):
+    #     return self.comments.count()
 
     def __str__(self):
-        return self.title
+        return f'{self.author} {self.title[:15]}'
 
 
 class Comment(AuthorModel):
     text = models.TextField('Текст комментария', max_length=TEXT_LENGTH,)
     post = models.ForeignKey(
         Post,
-        related_name='comments',
+        verbose_name='Комментарии',
         on_delete=models.CASCADE,)
     created_at = models.DateTimeField('Создано', auto_now_add=True,)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
+        default_related_name = 'comments'
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ('created_at',)
 
     def __str__(self):
-        return self.text
+        return f'{self.post} {self.text[:15]}'

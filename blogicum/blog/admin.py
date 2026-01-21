@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-
-from .models import Post, Category, Location
+from blog.models import Category, Comment, Location, Post
+from constants import EMPTY_VALUE_DISPLAY
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -20,7 +20,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('category',)
     list_display_links = ('title',)
-    empty_value_display = 'Не задано'
+    empty_value_display = EMPTY_VALUE_DISPLAY
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -37,7 +37,7 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('slug',)
     list_display_links = ('title',)
-    empty_value_display = 'Не задано'
+    empty_value_display = EMPTY_VALUE_DISPLAY
 
 
 class LocationAdmin(admin.ModelAdmin):
@@ -51,9 +51,21 @@ class LocationAdmin(admin.ModelAdmin):
     )
     search_fields = ('name',)
     list_display_links = ('name',)
-    empty_value_display = 'Не задано'
+    empty_value_display = EMPTY_VALUE_DISPLAY
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        'text',
+        'post',
+        'created_at',
+    )
+    search_fields = ('text',)
+    list_display_links = ('text',)
+    empty_value_display = EMPTY_VALUE_DISPLAY
 
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Location, LocationAdmin)
+admin.site.register(Comment, CommentAdmin)
