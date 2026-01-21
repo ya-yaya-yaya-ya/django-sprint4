@@ -88,29 +88,26 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # user_posts = Post.objects.select_related(
-        #     'category', 'location', 'author')
-        # if self.request.user == self.object:
-        #     user_posts = user_posts.filter(author=profile_user)
-        # else:
-        #     user_posts = user_posts.filter(
-        #         author=profile_user,
-        #         is_published=True,
-        #         category__is_published=True,
-        #         pub_date__lte=timezone.now(),
-        #         )
-        # user_posts = user_posts.annotate(comment_count=Count('comments')).order_by('-pub_date')
+        profile_user = self.request.user
+        user_posts = Post.objects.select_related(
+            'category', 'location', 'author')
+        if profile_user == self.object:
+            user_posts = user_posts.filter(author=profile_user)
+        else:
+            user_posts = user_posts.filter(
+                author=profile_user,
+                is_published=True,
+                category__is_published=True,
+                pub_date__lte=timezone.now(),
+                )
+        user_posts = user_posts.annotate(comment_count=Count(
+            'comments')).order_by('-pub_date'
+                                  )
         # page_obj = get_paginator(request, user_posts)
 
-
-        
-
-        user_posts = Post.objects.filter(
-            author=self.object
-        ).order_by('-pub_date')
-
-       
+        # user_posts = Post.objects.filter(
+        #     author=self.object
+        # ).order_by('-pub_date')
         context['page_obj'] = paginate_queryset(user_posts, self.request)
         return context
 
@@ -170,11 +167,21 @@ class PublishedPostsView(PostMixin, ListView):
     paginate_by = PAGINATE_COUNT
 
     def get_queryset(self):
-        return Post.objects.filter(
-            is_published=True,
-            category__is_published=True,
-            pub_date__lte=timezone.now()
-        )
+        return (
+            Post.objects.select_related('category', 'location', 'author')
+            .filter(
+                is_published=True,
+                category__is_published=True,
+                pub_date__lte=timezone.now()
+                )
+                .annotate(comment_count=Count('comments'))
+                .order_by('-pub_date')
+                )   
+        # return Post.objects.filter(
+        #     is_published=True,
+        #     category__is_published=True,
+        #     pub_date__lte=timezone.now()
+        # )
 
 
 class PostDetailView(LoginRequiredMixin, PostMixin, DetailView):
