@@ -15,7 +15,7 @@ from blog.models import Category, Post
 from constants import PAGINATE_COUNT
 from mixins import PostCheckMixin, PostMixin
 from service import (get_comment_and_check_permission, get_post,
-                     render_comment_template)
+                     get_objects, render_comment_template)
 
 
 def paginate_queryset(queryset, request, paginate_count=PAGINATE_COUNT):
@@ -88,26 +88,9 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile_user = self.request.user
-        user_posts = Post.objects.select_related(
-            'category', 'location', 'author')
-        if profile_user == self.object:
-            user_posts = user_posts.filter(author=profile_user)
-        else:
-            user_posts = user_posts.filter(
-                author=profile_user,
-                is_published=True,
-                category__is_published=True,
-                pub_date__lte=timezone.now(),
-                )
-        user_posts = user_posts.annotate(comment_count=Count(
-            'comments')).order_by('-pub_date'
-                                  )
-        # page_obj = get_paginator(request, user_posts)
-
-        # user_posts = Post.objects.filter(
-        #     author=self.object
-        # ).order_by('-pub_date')
+        user_name = self.kwargs.get('username')
+        profile_user = get_object_or_404(User, username=user_name)
+        user_posts = get_objects(profile_user=profile_user)
         context['page_obj'] = paginate_queryset(user_posts, self.request)
         return context
 
@@ -167,21 +150,7 @@ class PublishedPostsView(PostMixin, ListView):
     paginate_by = PAGINATE_COUNT
 
     def get_queryset(self):
-        return (
-            Post.objects.select_related('category', 'location', 'author')
-            .filter(
-                is_published=True,
-                category__is_published=True,
-                pub_date__lte=timezone.now()
-                )
-                .annotate(comment_count=Count('comments'))
-                .order_by('-pub_date')
-                )   
-        # return Post.objects.filter(
-        #     is_published=True,
-        #     category__is_published=True,
-        #     pub_date__lte=timezone.now()
-        # )
+        return get_objects()
 
 
 class PostDetailView(LoginRequiredMixin, PostMixin, DetailView):
@@ -220,22 +189,14 @@ class CategoryDetailView(DetailView):
         return category
 
     def get_context_data(self, **kwargs):
+        category_slug = self.kwargs.get('slug')
+        category = get_object_or_404(
+            Category.objects.all(), slug=category_slug,
+            is_published=True)
         context = super().get_context_data(**kwargs)
-        posts = Post.objects.select_related(
-            'category', 'location', 'author').filter(
-            is_published=True,
-            category__is_published=True,
-            pub_date__lte=timezone.now()
-        ).annotate(comment_count=Count('comments')).order_by('-pub_date')
-
-        print("нерее")
-        
-
-
-        # posts = Post.objects.filter(
-        #     category=self.object,
-        #     is_published=True,
-        #     pub_date__lte=timezone.now()
-        # ).order_by('-pub_date')
-        context['page_obj'] = paginate_queryset(posts, self.request)
+        posts = get_objects()
+        posts = posts.filter(category=category)
+        paginator = Paginator(posts, PAGINATE_COUNT)
+        page_obj = paginator.get_page(PAGINATE_COUNT)
+        context['page_obj'] = page_obj
         return context
