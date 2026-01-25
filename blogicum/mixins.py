@@ -1,5 +1,5 @@
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect
+
+from django.shortcuts import redirect
 
 from blog.models import Post
 
