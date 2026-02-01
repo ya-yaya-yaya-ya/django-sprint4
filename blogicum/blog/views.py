@@ -11,16 +11,9 @@ from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
 from blog.forms import CommentForm, PostForm, ProfileForm, RegisterForm
 from blog.models import Category
 from constants import PAGINATE_COUNT
-from mixins import PostCheckMixin, PostMixin
-from service import (get_comment_and_check_permission, get_objects, get_post,
-                     render_comment_template)
-
-
-def paginate_queryset(queryset, request, paginate_count=PAGINATE_COUNT):
-    """Функция для пагинации переданного queryset."""
-    paginator = Paginator(queryset, paginate_count)
-    page_number = request.GET.get('page')
-    return paginator.get_page(page_number)
+from blog.mixins import PostCheckMixin, PostMixin
+from blog.service import (get_comment_and_check_permission, get_objects, get_post,
+                     render_comment_template, paginate_queryset)
 
 
 @login_required
@@ -88,8 +81,8 @@ class ProfileDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         user_name = self.kwargs.get('username')
         profile_user = get_object_or_404(User, username=user_name)
-        user_posts = get_objects(profile_user=profile_user)
-        context['page_obj'] = paginate_queryset(user_posts, self.request)
+        posts = get_objects(profile_user=profile_user)
+        context['page_obj'] = paginate_queryset(posts, self.request)
         return context
 
 
@@ -101,8 +94,8 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     form_class = ProfileForm
     success_url = reverse_lazy('blog:index')
 
-    def get_object(self):
-        return get_object_or_404(User, username=self.request.user.username)
+    def get_object(self, queryset=None):
+        return self.request.user
 
 
 class PostCreateView(LoginRequiredMixin, PostMixin, CreateView):
@@ -133,7 +126,7 @@ class PostUpdateView(LoginRequiredMixin, PostMixin,
         )
 
 
-class PostDeleteView(PostMixin,
+class PostDeleteView(LoginRequiredMixin, PostMixin,
                      PostCheckMixin, DeleteView):
     """Страница удаления поста."""
 
@@ -156,11 +149,10 @@ class PublishedPostsView(PostMixin, ListView):
         return get_objects()
 
 
-class PostDetailView(LoginRequiredMixin, PostMixin, DetailView):
+class PostDetailView(PostMixin, DetailView):
     """Отображает страницу поста."""
 
     template_name = 'blog/detail.html'
-    context_object_name = 'post'
 
     def get_object(self, queryset=None):
         post_id = self.kwargs.get('post_id')
@@ -199,7 +191,5 @@ class CategoryDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         posts = get_objects()
         posts = posts.filter(category=category)
-        paginator = Paginator(posts, PAGINATE_COUNT)
-        page_obj = paginator.get_page(PAGINATE_COUNT)
-        context['page_obj'] = page_obj
+        context['page_obj'] = paginate_queryset(posts, self.request)
         return context

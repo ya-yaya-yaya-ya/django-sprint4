@@ -51,7 +51,6 @@ def get_objects(
 
     if need_count:
         objects = objects.annotate(comment_count=Count('comments'))
-    if sorted_string:
-        objects = objects.order_by(sorted_string)
+    objects = objects.order_by(sorted_string)
 
     return objects
